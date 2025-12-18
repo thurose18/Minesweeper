@@ -8,7 +8,7 @@ var grid_data = []    # Mảng 2 chiều chứa dữ liệu ('*', '0', '1'...)
 var game_over = false
 
 # Lấy tham chiếu đến GridContainer ta đã tạo ở Bước 1
-@onready var grid_container = $GridContainer
+@onready var grid_container = $CenterContainer/PanelContainer/GridContainer
 
 func _ready():
 	start_game()

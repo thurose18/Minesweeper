@@ -1,6 +1,16 @@
-[gd_scene load_steps=2 format=3 uid="uid://craeohm845fef"]
+[gd_scene load_steps=5 format=3 uid="uid://craeohm845fef"]
 
 [ext_resource type="Script" uid="uid://dawx5kn4amvew" path="res://main.gd" id="1_ig7tw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ig7tw"]
+bg_color = Color(0.62611467, 0.5324169, 0.87675416, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0xm2m"]
+bg_color = Color(0.6669851, 0.5060493, 0.8949127, 1)
+
+[sub_resource type="Theme" id="Theme_0xm2m"]
+/styles/button = SubResource("StyleBoxFlat_ig7tw")
+Button/styles/disabled = SubResource("StyleBoxFlat_0xm2m")
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -11,17 +21,18 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ig7tw")
 
-[node name="GridContainer" type="GridContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -20.0
-offset_top = -20.0
-offset_right = 20.0
-offset_bottom = 20.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CenterContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="CenterContainer/PanelContainer"]
+layout_mode = 2
+theme = SubResource("Theme_0xm2m")
 columns = 6
