@@ -7,10 +7,25 @@ var buttons = []      # Mảng 2 chiều chứa các nút (Button)
 var grid_data = []    # Mảng 2 chiều chứa dữ liệu ('*', '0', '1'...)
 var game_over = false
 
+# Thêm bảng màu cho các con số (Giống game gốc của Microsoft)
+var number_colors = {
+	1: Color.BLUE,
+	2: Color.GREEN,
+	3: Color.RED,
+	4: Color.DARK_BLUE,
+	5: Color.DARK_RED,
+	6: Color.CYAN,
+	7: Color.BLACK,
+	8: Color.GRAY
+}
+
 # Lấy tham chiếu đến GridContainer ta đã tạo ở Bước 1
 @onready var grid_container = $CenterContainer/PanelContainer/GridContainer
 
 func _ready():
+	# Căn giữa bảng chơi
+	grid_container.add_theme_constant_override("h_separation", 4)
+	grid_container.add_theme_constant_override("v_separation", 4)
 	start_game()
 
 func start_game():
@@ -88,7 +103,7 @@ func _on_button_pressed(r, c):
 	
 	# Nếu bấm trúng mìn (-1)
 	if value == -1:
-		btn.text = "BOOM"
+		btn.text = "💣" # Dùng Emoji quả bom
 		btn.modulate = Color.RED # Đổi màu đỏ
 		game_over = true
 		reveal_all_mines()
@@ -97,7 +112,7 @@ func _on_button_pressed(r, c):
 
 	# Nếu bấm trúng ô an toàn
 	reveal_cell(r, c)
-	
+		
 	# Kiểm tra thắng
 	if check_win():
 		print("Chiến thắng!")
@@ -111,10 +126,22 @@ func reveal_cell(r, c):
 	if btn.disabled: return # Đã mở rồi thì thôi
 	
 	btn.disabled = true # Vô hiệu hoá nút (để biết là đã mở)
+	
+	# Đổi style của nút đã mở (nền phẳng, màu xám nhạt)
+	var style_box = StyleBoxFlat.new()
+	style_box.bg_color = Color("d2d2d2ff") # Màu xám nhạt
+	style_box.set_corner_radius_all(4)
+	btn.add_theme_stylebox_override("disabled", style_box)
+	
 	var value = grid_data[r][c]
 	
 	if value > 0:
 		btn.text = str(value)
+		# Tô đậm chữ
+		btn.add_theme_font_size_override("font_size", 24) 
+		# Tô màu số theo quy tắc (1 xanh, 2 đỏ...)
+		if value in number_colors:
+			btn.add_theme_color_override("font_disabled_color", number_colors[value])
 	elif value == 0:
 		# Nếu là ô số 0 (trống), loang ra xung quanh (Đệ quy)
 		btn.text = "" 
@@ -130,7 +157,7 @@ func reveal_all_mines():
 	for r in range(grid_size):
 		for c in range(grid_size):
 			if grid_data[r][c] == -1:
-				buttons[r][c].text = "*"
+				buttons[r][c].text = "💣" # Hiện icon bom
 				buttons[r][c].disabled = true
 
 func check_win():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://craeohm845fef"]
+[gd_scene load_steps=6 format=3 uid="uid://craeohm845fef"]
 
 [ext_resource type="Script" uid="uid://dawx5kn4amvew" path="res://main.gd" id="1_ig7tw"]
 
@@ -6,11 +6,14 @@
 bg_color = Color(0.62611467, 0.5324169, 0.87675416, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0xm2m"]
-bg_color = Color(0.6669851, 0.5060493, 0.8949127, 1)
+bg_color = Color(0.6571457, 0.54728186, 0.7526883, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h2yge"]
 
 [sub_resource type="Theme" id="Theme_0xm2m"]
 /styles/button = SubResource("StyleBoxFlat_ig7tw")
 Button/styles/disabled = SubResource("StyleBoxFlat_0xm2m")
+Button/styles/normal = SubResource("StyleBoxFlat_h2yge")
 
 [node name="Main" type="Control"]
 layout_mode = 3
