@@ -2,7 +2,7 @@ extends Control
 
 # Cấu hình game
 var grid_size = 6
-var num_mines = 5
+var num_mines = 10
 var buttons = []      # Mảng 2 chiều chứa các nút (Button)
 var grid_data = []    # Mảng 2 chiều chứa dữ liệu ('*', '0', '1'...)
 var game_over = false
@@ -20,7 +20,7 @@ var number_colors = {
 }
 
 # Lấy tham chiếu đến GridContainer ta đã tạo ở Bước 1
-@onready var grid_container = $CenterContainer/PanelContainer/GridContainer
+@onready var grid_container = $VBoxContainer/CenterContainer/PanelContainer/GridContainer
 
 func _ready():
 	# Căn giữa bảng chơi
@@ -167,3 +167,7 @@ func check_win():
 			if buttons[r][c].disabled:
 				opened_count += 1
 	return opened_count == (grid_size * grid_size - num_mines)
+
+
+func _on_btn_reset_pressed() -> void:
+	start_game() # Replace with function body.
