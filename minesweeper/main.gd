@@ -6,6 +6,7 @@ var num_mines = 10
 var buttons = []      # Mảng 2 chiều chứa các nút (Button)
 var grid_data = []    # Mảng 2 chiều chứa dữ liệu ('*', '0', '1'...)
 var game_over = false
+var is_flag_mode = false
 
 # Thêm bảng màu cho các con số (Giống game gốc của Microsoft)
 var number_colors = {
@@ -99,6 +100,26 @@ func _on_button_pressed(r, c):
 	if game_over: return
 	
 	var btn = buttons[r][c]
+	
+	# --- LOGIC CẮM CỜ (MỚI) ---
+	if is_flag_mode:
+		# Nếu ô đã mở rồi thì không cắm cờ được
+		if btn.disabled and btn.text != "🚩": return
+		
+		if btn.text == "🚩":
+			# Nếu đang có cờ -> Gỡ cờ
+			btn.text = ""
+			btn.disabled = false # Cho phép bấm lại
+		else:
+			# Nếu chưa có cờ -> Cắm cờ
+			btn.text = "🚩"
+			# Không disable nút, nhưng ta dùng text để chặn việc đào
+		return # Dừng hàm, không thực hiện việc đào bên dưới
+		
+	# --- LOGIC ĐÀO (CŨ - Có thêm kiểm tra cờ) ---
+	# Nếu ô đang có cờ thì không cho đào (để bảo vệ người chơi)
+	if btn.text == "🚩": return
+	
 	var value = grid_data[r][c]
 	
 	# Nếu bấm trúng mìn (-1)
@@ -124,6 +145,7 @@ func reveal_cell(r, c):
 	
 	var btn = buttons[r][c]
 	if btn.disabled: return # Đã mở rồi thì thôi
+	if btn.text == "🚩": return # GẶP CỜ THÌ KHÔNG TỰ ĐỘNG MỞ
 	
 	btn.disabled = true # Vô hiệu hoá nút (để biết là đã mở)
 	
@@ -170,4 +192,14 @@ func check_win():
 
 
 func _on_btn_reset_pressed() -> void:
-	start_game() # Replace with function body.
+	start_game() 
+
+
+func _on_btn_mode_toggled(toggled_on: bool) -> void:
+	is_flag_mode = toggled_on
+	var btn_mode = $VBoxContainer/HBoxContainer/BtnMode # Đường dẫn đến nút
+	
+	if is_flag_mode:
+		btn_mode.text = "🚩" # Đổi icon thành Cờ
+	else:
+		btn_mode.text = "⛏️" # Đổi icon thành Xẻng 
