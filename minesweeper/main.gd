@@ -182,48 +182,48 @@ func calculate_numbers():
 			
 			grid_data[r][c] = mines_count
 
-func _on_button_pressed(r, c):
-	if game_over: return
-	
-	var btn = buttons[r][c]
-	
-	# --- LOGIC CẮM CỜ (MỚI) ---
-	if is_flag_mode:
-		# Nếu ô đã mở rồi thì không cắm cờ được
-		if btn.disabled and btn.text != "🚩": return
-		
-		if btn.text == "🚩":
-			# Nếu đang có cờ -> Gỡ cờ
-			btn.text = ""
-			btn.disabled = false # Cho phép bấm lại
-		else:
-			# Nếu chưa có cờ -> Cắm cờ
-			btn.text = "🚩"
-			# Không disable nút, nhưng ta dùng text để chặn việc đào
-		return # Dừng hàm, không thực hiện việc đào bên dưới
-		
-	# --- LOGIC ĐÀO (CŨ - Có thêm kiểm tra cờ) ---
-	# Nếu ô đang có cờ thì không cho đào (để bảo vệ người chơi)
-	if btn.text == "🚩": return
-	
-	var value = grid_data[r][c]
-	
-	# Nếu bấm trúng mìn (-1)
-	if value == -1:
-		btn.text = "💣" # Dùng Emoji quả bom
-		btn.modulate = Color.RED # Đổi màu đỏ
-		game_over = true
-		reveal_all_mines()
-		print("Bạn thua rồi!")
-		return
-
-	# Nếu bấm trúng ô an toàn
-	reveal_cell(r, c)
-		
-	# Kiểm tra thắng
-	if check_win():
-		print("Chiến thắng!")
-		game_over = true
+#func _on_button_pressed(r, c):
+#	if game_over: return
+#	
+#	var btn = buttons[r][c]
+#	
+#	# --- LOGIC CẮM CỜ (MỚI) ---
+#	if is_flag_mode:
+#		# Nếu ô đã mở rồi thì không cắm cờ được
+#		if btn.disabled and btn.text != "🚩": return
+#		
+#		if btn.text == "🚩":
+#			# Nếu đang có cờ -> Gỡ cờ
+#			btn.text = ""
+#			btn.disabled = false # Cho phép bấm lại
+#		else:
+#			# Nếu chưa có cờ -> Cắm cờ
+#			btn.text = "🚩"
+#			# Không disable nút, nhưng ta dùng text để chặn việc đào
+#		return # Dừng hàm, không thực hiện việc đào bên dưới
+#		
+#	# --- LOGIC ĐÀO (CŨ - Có thêm kiểm tra cờ) ---
+#	# Nếu ô đang có cờ thì không cho đào (để bảo vệ người chơi)
+#	if btn.text == "🚩": return
+#	
+#	var value = grid_data[r][c]
+#	
+#	# Nếu bấm trúng mìn (-1)
+#	if value == -1:
+#		btn.text = "💣" # Dùng Emoji quả bom
+#		btn.modulate = Color.RED # Đổi màu đỏ
+#		game_over = true
+#		reveal_all_mines()
+#		print("Bạn thua rồi!")
+#		return
+#
+#	# Nếu bấm trúng ô an toàn
+#	reveal_cell(r, c)
+#		
+#	# Kiểm tra thắng
+#	if check_win():
+#		print("Chiến thắng!")
+#		game_over = true
 
 func reveal_cell(r, c):
 	# Kiểm tra biên
