@@ -64,5 +64,10 @@ layout_mode = 2
 theme = SubResource("Theme_0xm2m")
 columns = 6
 
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.4
+one_shot = true
+
 [connection signal="pressed" from="VBoxContainer/HBoxContainer/BtnReset" to="." method="_on_btn_reset_pressed"]
 [connection signal="toggled" from="VBoxContainer/HBoxContainer/BtnMode" to="." method="_on_btn_mode_toggled"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

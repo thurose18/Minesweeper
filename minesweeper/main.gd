@@ -8,6 +8,12 @@ var grid_data = []    # Mảng 2 chiều chứa dữ liệu ('*', '0', '1'...)
 var game_over = false
 var is_flag_mode = false
 
+@onready var long_press_timer = $Timer # Đường dẫn đến Timer bạn vừa tạo
+# Biến lưu trạng thái nhấn giữ
+var current_r = -1
+var current_c = -1
+var is_long_press_handled = false # Biến để kiểm tra xem đã cắm cờ chưa
+
 # Thêm bảng màu cho các con số (Giống game gốc của Microsoft)
 var number_colors = {
 	1: Color.BLUE,
@@ -51,8 +57,12 @@ func start_game():
 			btn.name = str(r) + "_" + str(c)
 			
 			# KẾT NỐI SỰ KIỆN: Khi bấm nút -> gọi hàm _on_button_pressed
-			# .bind(r, c) giúp gửi kèm toạ độ vào hàm
-			btn.pressed.connect(_on_button_pressed.bind(r, c))
+			# Không dùng 'pressed' nữa, dùng 'button_down' và 'button_up'
+			# 1. Khi ngón tay chạm vào màn hình
+			btn.button_down.connect(_on_btn_down.bind(r, c))
+		
+			# 2. Khi ngón tay nhấc khỏi màn hình
+			btn.button_up.connect(_on_btn_up.bind(r, c))
 			
 			grid_container.add_child(btn)
 			row_btns.append(btn)
@@ -63,6 +73,82 @@ func start_game():
 	# 3. Rải mìn và tính số
 	generate_mines()
 	calculate_numbers()
+	
+# 1. Khi bắt đầu chạm vào nút
+func _on_btn_down(r, c):
+	if game_over: return
+	var btn = buttons[r][c]
+	if btn.disabled and btn.text != "🚩": return # Nếu đã mở rồi thì thôi
+
+	# Lưu lại toạ độ nút đang bấm
+	current_r = r
+	current_c = c
+	is_long_press_handled = false 
+	
+	# Bắt đầu đếm giờ
+	long_press_timer.start()
+	
+# 2. Khi Timer đếm xong (Tức là đã giữ đủ 0.5s) -> CẮM CỜ
+func _on_timer_timeout():
+	# Nếu ngón tay vẫn chưa nhấc lên
+	if current_r != -1:
+		is_long_press_handled = true # Đánh dấu là đã xử lý cắm cờ
+		
+		# Gọi hàm cắm cờ (Logic cũ của bạn)
+		toggle_flag(current_r, current_c)
+		
+		# Rung nhẹ điện thoại để báo hiệu (Chỉ chạy trên đt thật)
+		Input.vibrate_handheld(50)
+		
+# 3. Khi nhấc ngón tay lên
+func _on_btn_up(r, c):
+	# Dừng đồng hồ ngay lập tức
+	long_press_timer.stop()
+	
+	# Reset biến theo dõi
+	current_r = -1
+	current_c = -1
+	
+	# Nếu lúc nãy Timer đã chạy xong và Cắm cờ rồi -> Thì thôi, không đào nữa
+	if is_long_press_handled:
+		return
+	
+	# Nếu Timer chưa kịp chạy xong -> Nghĩa là bấm nhanh -> ĐÀO
+	dig_cell(r, c)
+	
+# --- TÁCH LOGIC CŨ RA THÀNH HÀM RIÊNG CHO GỌN ---
+
+func toggle_flag(r, c):
+	var btn = buttons[r][c]
+	if btn.disabled and btn.text != "🚩": return
+	
+	if btn.text == "🚩":
+		btn.text = "" # Gỡ cờ
+		btn.disabled = false
+	else:
+		btn.text = "🚩" # Cắm cờ
+		# btn.disabled = true # (Tuỳ chọn: có thể disable hoặc không)
+		
+func dig_cell(r, c):
+	var btn = buttons[r][c]
+	
+	# Nếu đang có cờ thì không cho đào
+	if btn.text == "🚩": return
+	
+	var value = grid_data[r][c]
+	
+	if value == -1:
+		# ... Xử lý thua (copy code cũ vào đây) ...
+		btn.text = "💣"
+		btn.modulate = Color.RED
+		game_over = true
+		reveal_all_mines()
+		print("Bùm!")
+	else:
+		reveal_cell(r, c)
+		if check_win():
+			print("Thắng!")
+			game_over = true
 
 func generate_mines():
 	var count = 0
@@ -203,3 +289,5 @@ func _on_btn_mode_toggled(toggled_on: bool) -> void:
 		btn_mode.text = "🚩" # Đổi icon thành Cờ
 	else:
 		btn_mode.text = "⛏️" # Đổi icon thành Xẻng 
+
+pass # Replace with function body.
